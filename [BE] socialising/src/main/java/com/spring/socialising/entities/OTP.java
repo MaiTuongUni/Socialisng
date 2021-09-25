@@ -1,19 +1,30 @@
 package com.spring.socialising.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.joda.time.DateTime;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.time.Instant;
+import java.util.UUID;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Document(collection = "verification-code")
 public class OTP {
-    int otp;
+    @Id
+    private UUID id;
 
-    String phoneNumber;
+    @JsonIgnore
+    private int otp;
 
-    DateTime dateTime;
+    private String phoneNumber;
+
+    @JsonIgnore
+    Instant createDate;
 }

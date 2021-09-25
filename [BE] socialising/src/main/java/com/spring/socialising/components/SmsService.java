@@ -8,14 +8,11 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 
 import com.twilio.rest.api.v2010.account.Message;
 import com.twilio.type.PhoneNumber;
-import org.springframework.util.MultiValueMap;
 
 @Component
 public class SmsService {
@@ -33,10 +30,9 @@ public class SmsService {
 
     private final String  TOPIC_DESTINATION = "/lesson/sms";
 
-    public boolean sendMessageOTP(String phone_number){
+    public boolean sendMessageOTP(String phone_number, int OTP){
         try{
             this.send(phone_number);
-//            webSocket.convertAndSend(TOPIC_DESTINATION, getTimeStamp() + ": SMS has been sent!: "+phone_number);
             return true;
         }
         catch(Exception e) {
@@ -60,6 +56,11 @@ public class SmsService {
                 .create();
     }
 
+    public int generateOTP(){
+        int min = 100000;
+        int max = 999999;
+        return  (int)(Math.random()*(max-min+1)+min);
+    }
     private String getTimeStamp() {
         return DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(LocalDateTime.now());
     }
