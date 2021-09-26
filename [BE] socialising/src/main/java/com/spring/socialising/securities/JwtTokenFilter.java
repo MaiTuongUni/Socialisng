@@ -19,20 +19,13 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Locale;
 
-/**
- * Created by: IntelliJ IDEA
- * User      : thangpx
- * Date      : 3/31/21
- * Time      : 18:33
- * Filename  : JwtTokenFilter
- */
 public class JwtTokenFilter extends OncePerRequestFilter {
 
     @Autowired
     private JwtTokenUtils jwtTokenUtils;
 
     @Autowired
-    private TaiKhoanDetailsService taiKhoanDetailsService;
+    private AccountDetailsService accountDetailsService;
 
     @Autowired
     private MessageSource messageSource;
@@ -56,17 +49,9 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = null;
             try {
-                userDetails = this.taiKhoanDetailsService.loadUserByUsername(username);
+                userDetails = this.accountDetailsService.loadUserByUsername(username);
             } catch (UsernameNotFoundException e1) {
-                try {
 
-                } catch (UsernameNotFoundException e2) {
-                    try {
-
-                    } catch (UsernameNotFoundException e3) {
-
-                    }
-                }
             }
             if (userDetails != null && jwtTokenUtils.validateToken(jwtToken, userDetails)) {
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());

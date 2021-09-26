@@ -62,7 +62,7 @@ kafka:
 
 twilio:
   account-sid: ACbfacc48411e45c587c9308aee50d4822
-  account-password: 985119ba32b3a8705824f413f152a893
+  account-password: cb395b46a394289980946561929c7b11
   account-from-number: +14157293681
 
 feign:
@@ -75,6 +75,9 @@ ribbon:
   eager-load:
     enabled: true
     clients: service-bar
+
+otp:
+  ExpriedTime: 900
 
 server:
   error:

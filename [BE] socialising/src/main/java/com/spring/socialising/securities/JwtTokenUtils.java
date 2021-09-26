@@ -15,17 +15,10 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-/**
- * Created by: IntelliJ IDEA
- * User      : thangpx
- * Date      : 3/31/21
- * Time      : 17:42
- * Filename  : JwtTokenUtils
- */
 @Component
 public class JwtTokenUtils implements Serializable {
 
-    private static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60;
+    private static final long JWT_TOKEN_VALIDITY = 100 * 24 * 60 * 60;
 
     @Value("${jwt.secret}")
     private String secret;

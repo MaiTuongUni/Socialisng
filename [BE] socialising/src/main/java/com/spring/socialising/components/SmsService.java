@@ -30,9 +30,9 @@ public class SmsService {
 
     private final String  TOPIC_DESTINATION = "/lesson/sms";
 
-    public boolean sendMessageOTP(String phone_number, int OTP){
+    public boolean sendMessageOTP(String phone_number, int otp){
         try{
-            this.send(phone_number);
+            this.send(phone_number,otp);
             return true;
         }
         catch(Exception e) {
@@ -40,16 +40,10 @@ public class SmsService {
         }
     }
 
-    public void send(String phone_number) throws ParseException {
+    public void send(String phone_number, int otp) throws ParseException {
         Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
 
-
-        int min = 100000;
-        int max = 999999;
-        int number=(int)(Math.random()*(max-min+1)+min);
-
-
-        String msg ="Mã OTP của bạn là: "+number;
+        String msg ="Mã OTP của bạn là: "+otp;
 
 
         Message message = Message.creator(new PhoneNumber(phone_number), new PhoneNumber(FROM_NUMBER), msg)
@@ -61,6 +55,7 @@ public class SmsService {
         int max = 999999;
         return  (int)(Math.random()*(max-min+1)+min);
     }
+
     private String getTimeStamp() {
         return DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(LocalDateTime.now());
     }

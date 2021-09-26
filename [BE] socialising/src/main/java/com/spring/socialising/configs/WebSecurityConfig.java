@@ -18,13 +18,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-/**
- * Created by: IntelliJ IDEA
- * User      : thangpx
- * Date      : 3/31/21
- * Time      : 09:50
- * Filename  : WebSecurityConfig
- */
 @Order
 @Configuration
 @EnableWebSecurity
@@ -35,7 +28,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private JwtTokenUtils jwtTokenUtils;
 
     @Autowired
-    private TaiKhoanDetailsService taiKhoanDetailsService;
+    private AccountDetailsService accountDetailsService;
 
     @Autowired
     private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
@@ -58,18 +51,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/webjars/**").permitAll()
                 .antMatchers("/swagger-resources/**").permitAll()
                 .antMatchers("/v2/**").permitAll()
-                .antMatchers(HttpMethod.GET, "/rest/**").permitAll()
-                .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .antMatchers(HttpMethod.POST, "/rest/login/**").permitAll()
                 .antMatchers(HttpMethod.POST, "/rest/sign-up/**").permitAll()
-                .anyRequest().authenticated();
+                .anyRequest().hasAuthority("USER");
         http.addFilterBefore(authenticationTokenFilterBean(), UsernamePasswordAuthenticationFilter.class);
 
         http.headers().cacheControl();
     }
 
     private AuthenticationProvider getTaiKhoanProvider() {
-        return new AccountAuthenticationProvider(taiKhoanDetailsService, messageSource);
+        return new AccountAuthenticationProvider(accountDetailsService, messageSource);
     }
 
 

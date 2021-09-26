@@ -8,8 +8,7 @@ import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.time.Instant;
-import java.util.UUID;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -18,13 +17,17 @@ import java.util.UUID;
 @Document(collection = "verification-code")
 public class OTP {
     @Id
-    private UUID id;
+    private String id;
 
     @JsonIgnore
     private int otp;
 
     private String phoneNumber;
 
+    private boolean isActive;
+
+    private int type;
+
     @JsonIgnore
-    Instant createDate;
+    LocalDateTime createDate;
 }
