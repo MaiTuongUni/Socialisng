@@ -5,7 +5,7 @@ import com.spring.socialising.entities.OTP;
 import java.text.ParseException;
 
 public interface OTPService {
-    void sendOTP( String number) throws ParseException;
+    void sendOTP( String number, int type) throws ParseException;
 
     boolean insertOrUpdateOTP(OTP otp,int type);
 

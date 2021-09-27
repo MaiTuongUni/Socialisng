@@ -2,7 +2,10 @@ package com.spring.socialising.controllers;
 
 import com.spring.socialising.components.SmsService;
 import com.spring.socialising.dtos.AccountDTO;
+import com.spring.socialising.dtos.OTPDTO;
+import com.spring.socialising.dtos.PasswordDTO;
 import com.spring.socialising.dtos.TokenDetails;
+import com.spring.socialising.entities.OTP;
 import com.spring.socialising.entities.User;
 import com.spring.socialising.entities.response.ResponseData;
 import com.spring.socialising.exceptions.InvalidException;

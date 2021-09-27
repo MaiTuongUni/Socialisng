@@ -28,22 +28,22 @@ public class OTPServiceImpl implements OTPService {
     }
 
     @Override
-    public void sendOTP(String number) throws ParseException {
+    public void sendOTP(String number,int type) throws ParseException {
         OTP otp = new OTP();
         //Generate OTP
         otp.setOtp(smsService.generateOTP());
 
         //Send OTP
-        //smsService.sendMessageOTP(number,otp.getOtp());
+        smsService.sendMessageOTP(number,otp.getOtp());
 
         //Insert or Update OTP
         otp.setPhoneNumber(number);
-        this.insertOrUpdateOTP(otp, 0);
+        this.insertOrUpdateOTP(otp, type);
     }
 
     @Override
     public boolean insertOrUpdateOTP(OTP otp, int type) {
-        OTP otpFound = otpRepository.findByPhoneNumber(otp.getPhoneNumber());
+        OTP otpFound = otpRepository.findByPhoneNumberAndType(otp.getPhoneNumber(),0);
 
         if(otpFound == null){ //OTP for new
             otp.setCreateDate(LocalDateTime.now());

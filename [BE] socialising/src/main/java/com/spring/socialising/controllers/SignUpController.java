@@ -62,7 +62,7 @@ public class SignUpController {
             }
 
             //Send OTP for client
-            otpService.sendOTP(number);
+            otpService.sendOTP(number,0);
             return new ResponseEntity<>(ResponseData.builder()
                     .success(true)
                     .message(messageSource.getMessage("success.otp-sent", null,locale))
