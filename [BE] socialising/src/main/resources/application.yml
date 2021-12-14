@@ -16,9 +16,6 @@ spring:
 jwt:
   secret: 9RLtDzsDcwb67990ssdq
 
-default:
-  password: 123456@$2021
-
 
 paging:
   default:
@@ -55,8 +52,8 @@ kafka:
 
 twilio:
   account-sid: ACbfacc48411e45c587c9308aee50d4822
-  account-password: 4ca5f3a6f2cb2e568c116b645b6b1646
-  account-from-number: +14157293681
+  account-password: 80ebe83ba28708aaf147070b60a27cc9
+  account-from-number: +13254405996
 
 feign:
   hystrix:

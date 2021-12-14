@@ -1,5 +1,7 @@
 package com.spring.socialising.controllers;
 
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import com.spring.socialising.dtos.OTPDTO;
 import com.spring.socialising.dtos.PasswordDTO;
 import com.spring.socialising.entities.OTP;
@@ -8,14 +10,19 @@ import com.spring.socialising.entities.response.ResponseData;
 import com.spring.socialising.securities.JwtUserDetails;
 import com.spring.socialising.services.OTPService.OTPService;
 import com.spring.socialising.services.UserService.UserService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.io.File;
+import java.io.IOException;
 import java.util.Locale;
+import java.util.Map;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.OK;
@@ -29,12 +36,21 @@ public class UserController {
     private final OTPService otpService;
 
     private final MessageSource messageSource;
+
+    private final Cloudinary cloudinary;
+
     private ResponseEntity<ResponseData> responseDataResponseEntity;
 
     public UserController(UserService userService, OTPService otpService, MessageSource messageSource) {
         this.userService = userService;
         this.otpService = otpService;
         this.messageSource = messageSource;
+
+        cloudinary = new Cloudinary(ObjectUtils.asMap(
+                "cloud_name", "dow0lu50x",
+                "api_key", "821191592441416",
+                "api_secret", "hStgEbItYDh5WtDUUBSF6qqCa0o",
+                "secure", true));
     }
 
     @GetMapping("/information")
@@ -168,5 +184,32 @@ public class UserController {
                     .data(null)
                     .build(), BAD_REQUEST);
         }
+    }
+
+    @PostMapping("/upload-image-profile")
+    public ResponseEntity<ResponseData> uploadImageProfile(@RequestParam MultipartFile image_profile) throws IOException {
+        if(!StringUtils.isEmpty(image_profile.getName())){
+            if(image_profile.getContentType().substring(0,5).equals("image")){
+                //Upload data here
+                Map uploadResult = cloudinary.uploader().upload(image_profile.getBytes(), ObjectUtils.asMap("folder","image_profile"));
+                System.out.println(uploadResult);
+            }
+            else
+            {
+                return new ResponseEntity<>(ResponseData.builder()
+                        .success(false)
+                        .message("The file did not a image file")
+                        .data(null)
+                        .build(), BAD_REQUEST);
+            }
+        }
+        else {
+            return new ResponseEntity<>(ResponseData.builder()
+                    .success(false)
+                    .message("The request has file is empty")
+                    .data(null)
+                    .build(), BAD_REQUEST);
+        }
+        return null;
     }
 }

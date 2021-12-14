@@ -6,7 +6,7 @@ import com.spring.socialising.exceptions.NotFoundException;
 import com.spring.socialising.exceptions.ServerException;
 import com.spring.socialising.dtos.FileStoreResult;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FileUtils;
+//import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -24,13 +24,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
 
-/**
- * Created by: IntelliJ IDEA
- * User      : thangpx
- * Date      : 3/31/21
- * Time      : 13:05
- * Filename  : FileStorageServiceImpl
- */
 @Slf4j
 @Service
 public class FileStorageServiceImpl implements FileStorageService{
@@ -68,33 +61,29 @@ public class FileStorageServiceImpl implements FileStorageService{
     public FileStoreResult storeFile(File file, String subFolder) {
         // Normalize file name
         String fileName = generateFileName();
-        try {
-            // Check if the file's name contains invalid characters
-            if (fileName.contains("..")) {
-                throw new FileStorageException("Sorry! Filename contains invalid path sequence " + fileName);
-            }
-            Path targetLocation;
-            if (!ObjectUtils.isEmpty(subFolder)) {
-                if (!Files.exists(Paths.get(this.fileUploadDirStorageLocation.getFileName().toString() + File.separatorChar + subFolder))) {
-                    String fullDirectoryPath = this.fileUploadDirStorageLocation.toAbsolutePath().toString() + this.fileUploadDirStorageLocation.getFileName().toString() + File.separator + subFolder;
-                    File directory = new File(fullDirectoryPath);
-                    directory.mkdir();
-                }
-                targetLocation = Paths.get(this.fileUploadDirStorageLocation.getFileName().toString() + File.separatorChar +
-                        subFolder + File.separatorChar + fileName);
-            } else {
-                targetLocation = Paths.get(this.fileUploadDirStorageLocation.getFileName().toString() + File.separatorChar + fileName);
-            }
-            FileUtils.copyFile(file, targetLocation.toFile(), true);
-            // xoa file temp
-            FileUtils.deleteQuietly(file);
-            FileStoreResult fileStoreResult = new FileStoreResult();
-            fileStoreResult.setTenFile(fileName);
-            fileStoreResult.setDuongDan(targetLocation.toString());
-            return fileStoreResult;
-        } catch (IOException ex) {
-            throw new FileStorageException("Could not store file " + fileName + ". Please try again!", ex);
+        // Check if the file's name contains invalid characters
+        if (fileName.contains("..")) {
+            throw new FileStorageException("Sorry! Filename contains invalid path sequence " + fileName);
         }
+        Path targetLocation;
+        if (!ObjectUtils.isEmpty(subFolder)) {
+            if (!Files.exists(Paths.get(this.fileUploadDirStorageLocation.getFileName().toString() + File.separatorChar + subFolder))) {
+                String fullDirectoryPath = this.fileUploadDirStorageLocation.toAbsolutePath().toString() + this.fileUploadDirStorageLocation.getFileName().toString() + File.separator + subFolder;
+                File directory = new File(fullDirectoryPath);
+                directory.mkdir();
+            }
+            targetLocation = Paths.get(this.fileUploadDirStorageLocation.getFileName().toString() + File.separatorChar +
+                    subFolder + File.separatorChar + fileName);
+        } else {
+            targetLocation = Paths.get(this.fileUploadDirStorageLocation.getFileName().toString() + File.separatorChar + fileName);
+        }
+//            FileUtils.copyFile(file, targetLocation.toFile(), true);
+//            // xoa file temp
+//            FileUtils.deleteQuietly(file);
+        FileStoreResult fileStoreResult = new FileStoreResult();
+        fileStoreResult.setTenFile(fileName);
+        fileStoreResult.setDuongDan(targetLocation.toString());
+        return fileStoreResult;
     }
 
     @Override

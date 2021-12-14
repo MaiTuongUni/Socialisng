@@ -34,6 +34,8 @@ public class User {
 
     private String urlImage;
 
+    private String nick_name;
+
     private List<FriendApprove> friend_id;
 
     private List<FriendRequest> friend_request;
