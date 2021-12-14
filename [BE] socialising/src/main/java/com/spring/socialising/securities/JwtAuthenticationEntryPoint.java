@@ -13,13 +13,6 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.Locale;
 
-/**
- * Created by: IntelliJ IDEA
- * User      : thangpx
- * Date      : 3/31/21
- * Time      : 16:01
- * Filename  : JwtAuthenticationEntryPoint
- */
 @Component
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint, Serializable {
     private final MessageSource messageSource;
