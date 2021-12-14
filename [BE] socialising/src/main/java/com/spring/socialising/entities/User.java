@@ -1,6 +1,8 @@
 package com.spring.socialising.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.spring.socialising.entities.block.FriendApprove;
+import com.spring.socialising.entities.block.FriendRequest;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,6 +13,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.Email;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -30,6 +33,10 @@ public class User {
     private String dateOfBirth;
 
     private String urlImage;
+
+    private List<FriendApprove> friend_id;
+
+    private List<FriendRequest> friend_request;
 
     @JsonIgnore
     @CreatedDate
