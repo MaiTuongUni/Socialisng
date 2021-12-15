@@ -13,4 +13,6 @@ public interface UserService {
     boolean changePasswordByOTP(String userName, String newPassword);
 
     boolean changePasswordByLogin(JwtUserDetails userDetails, PasswordDTO passwordDTO);
+
+    boolean updateUser(User user);
 }

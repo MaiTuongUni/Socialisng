@@ -1,7 +1,6 @@
 package com.spring.socialising.controllers;
 
-import com.cloudinary.Cloudinary;
-import com.cloudinary.utils.ObjectUtils;
+import com.spring.socialising.components.CloudinaryService;
 import com.spring.socialising.dtos.OTPDTO;
 import com.spring.socialising.dtos.PasswordDTO;
 import com.spring.socialising.entities.OTP;
@@ -19,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
-import java.io.File;
 import java.io.IOException;
 import java.util.Locale;
 import java.util.Map;
@@ -37,20 +35,15 @@ public class UserController {
 
     private final MessageSource messageSource;
 
-    private final Cloudinary cloudinary;
+    private final CloudinaryService cloudinaryService;
 
     private ResponseEntity<ResponseData> responseDataResponseEntity;
 
-    public UserController(UserService userService, OTPService otpService, MessageSource messageSource) {
+    public UserController(UserService userService, OTPService otpService, MessageSource messageSource, CloudinaryService cloudinaryService) {
         this.userService = userService;
         this.otpService = otpService;
         this.messageSource = messageSource;
-
-        cloudinary = new Cloudinary(ObjectUtils.asMap(
-                "cloud_name", "dow0lu50x",
-                "api_key", "821191592441416",
-                "api_secret", "hStgEbItYDh5WtDUUBSF6qqCa0o",
-                "secure", true));
+        this.cloudinaryService = cloudinaryService;
     }
 
     @GetMapping("/information")
@@ -190,9 +183,22 @@ public class UserController {
     public ResponseEntity<ResponseData> uploadImageProfile(@RequestParam MultipartFile image_profile) throws IOException {
         if(!StringUtils.isEmpty(image_profile.getName())){
             if(image_profile.getContentType().substring(0,5).equals("image")){
-                //Upload data here
-                Map uploadResult = cloudinary.uploader().upload(image_profile.getBytes(), ObjectUtils.asMap("folder","image_profile"));
-                System.out.println(uploadResult);
+                JwtUserDetails userDetails = (JwtUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+                User currentUser = userService.findUserByPhoneNumber(userDetails.getUsername());
+                if(!StringUtils.isEmpty(currentUser.getUrlImage())){
+                    cloudinaryService.deleteImageProfile(currentUser.getImage_public_id());
+                }
+
+                Map uploadResult = cloudinaryService.uploadImageProfile(image_profile);
+                currentUser.setUrlImage(uploadResult.get("url").toString());
+                currentUser.setImage_public_id(uploadResult.get("public_id").toString());
+                userService.updateUser(currentUser);
+
+                return new ResponseEntity<>(ResponseData.builder()
+                        .success(true)
+                        .message("Image profile was change")
+                        .data(currentUser)
+                        .build(), OK);
             }
             else
             {
@@ -210,6 +216,5 @@ public class UserController {
                     .data(null)
                     .build(), BAD_REQUEST);
         }
-        return null;
     }
 }

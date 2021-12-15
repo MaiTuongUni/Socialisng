@@ -17,6 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Locale;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -47,6 +49,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public boolean createUser(UserDTO userDTO) {
         User user = userMapper.mapperToUser(userDTO);
+        user.setCode_register_socket((UUID.randomUUID().toString()+UUID.randomUUID().toString()).replace("-","").toLowerCase());
         userRepository.save(user);
 
         //create account for user
@@ -88,6 +91,11 @@ public class UserServiceImpl implements UserService {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public boolean updateUser(User user) {
+        return userRepository.save(user)==null?false:true;
     }
 
 }

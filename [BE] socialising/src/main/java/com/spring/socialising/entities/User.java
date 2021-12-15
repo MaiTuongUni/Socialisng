@@ -32,7 +32,12 @@ public class User {
 
     private String dateOfBirth;
 
+    private String code_register_socket;
+
     private String urlImage;
+
+    @JsonIgnore
+    private String image_public_id;
 
     private String nick_name;
 
