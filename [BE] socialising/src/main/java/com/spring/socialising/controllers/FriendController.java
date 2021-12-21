@@ -1,12 +1,11 @@
 package com.spring.socialising.controllers;
 
+import com.spring.socialising.entities.block.FriendApprove;
+import com.spring.socialising.entities.block.FriendRequest;
 import com.spring.socialising.entities.response.ResponseData;
 import com.spring.socialising.services.FriendService.FriendService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import static org.springframework.http.HttpStatus.OK;
 
@@ -27,4 +26,31 @@ public class FriendController {
                 .data(friendService.findUserByNickNameNear(nickname,page,size))
                 .build(), OK);
     }
+
+    @GetMapping("/get-friend-list")
+    public ResponseEntity<ResponseData> getFriendList(){
+        return friendService.getFriendList();
+    }
+
+    @GetMapping("/get-friend-request-list")
+    public ResponseEntity<ResponseData> getFriendRequestList(){
+        return friendService.getFriendRequestList();
+    }
+
+    @PostMapping("/send-friend-request")
+    public ResponseEntity<ResponseData> sendFriendRequest(@RequestBody FriendRequest friendRequest){
+        return friendService.sendFriendRequest(friendRequest);
+    }
+
+    @PostMapping("/approve-friend-request")
+    public ResponseEntity<ResponseData> approveFriendRequest(@RequestBody FriendApprove friendApprove){
+        return friendService.approveFriendRequest(friendApprove);
+    }
+
+    @PostMapping("/reject-friend-request")
+    public ResponseEntity<ResponseData> rejectFriendRequest(@RequestBody FriendApprove friendApprove){
+        return friendService.rejectFriendRequest(friendApprove);
+    }
+
+
 }

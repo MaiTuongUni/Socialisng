@@ -13,6 +13,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.Email;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
@@ -41,9 +42,11 @@ public class User {
 
     private String nick_name;
 
-    private List<FriendApprove> friend_id;
+    @JsonIgnore
+    private List<FriendApprove> friend = new ArrayList<>();
 
-    private List<FriendRequest> friend_request;
+    @JsonIgnore
+    private List<FriendRequest> friend_request = new ArrayList<>();
 
     @JsonIgnore
     @CreatedDate
@@ -52,4 +55,34 @@ public class User {
     @JsonIgnore
     @LastModifiedDate
     private  LocalDateTime updatedDate;
+
+    public void addFriendRequest(FriendRequest friendRequest){
+        friendRequest.setTime_request(LocalDateTime.now());
+
+        FriendApprove friendApprove = new FriendApprove();
+        friendApprove.setUser_id(friendRequest.getUser_id());
+        this.removeFriendRequest(friendApprove);
+        this.friend_request.add(friendRequest);
+    }
+
+    public void removeFriendRequest(FriendApprove friendRequest){
+        for (FriendRequest request: this.friend_request) {
+            if(request.getUser_id().equals(friendRequest.getUser_id())){
+                this.friend_request.remove(request);
+            }
+        }
+    }
+
+    public void addFriend(FriendApprove friendApprove){
+        friendApprove.setCreated_date(LocalDateTime.now());
+        this.friend.add(friendApprove);
+    }
+
+    public void removeFriend(FriendApprove friendApprove){
+        for (FriendApprove friendItem: this.friend) {
+            if(friendItem.getUser_id().equals(friendApprove.getUser_id())){
+                this.friend.remove(friendItem);
+            }
+        }
+    }
 }

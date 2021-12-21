@@ -11,7 +11,7 @@ import java.util.UUID;
 
 @Repository
 @Transactional
-public interface UserRepository extends MongoRepository<User, UUID> {
+public interface UserRepository extends MongoRepository<User, String> {
     User findByPhoneNumber(String phoneNumber);
 
     @Query(value = "{ 'nick_name' : { $regex: ?0, $options: 'i' }}", sort = "{'nick_name': -1}")
