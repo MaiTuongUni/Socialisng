@@ -1,8 +1,10 @@
 package com.spring.socialising.services.FriendService;
 
+import com.spring.socialising.components.UserStorage;
 import com.spring.socialising.entities.User;
 import com.spring.socialising.entities.block.FriendApprove;
 import com.spring.socialising.entities.block.FriendRequest;
+import com.spring.socialising.entities.block.UserActiveInfo;
 import com.spring.socialising.entities.response.DataTemplatePaging;
 import com.spring.socialising.entities.response.ResponseData;
 import com.spring.socialising.repositories.UserRepository.UserRepository;
@@ -13,6 +15,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +34,9 @@ import static org.springframework.http.HttpStatus.OK;
 public class FriendServiceImpl implements FriendService {
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private SimpMessagingTemplate simpMessagingTemplate;
 
     @Override
     public DataTemplatePaging findUserByNickNameNear(String nickname, int page, int size) {
@@ -68,6 +74,10 @@ public class FriendServiceImpl implements FriendService {
         userRepository.save(user);
 
         //Socket
+        UserActiveInfo userActiveInfo = UserStorage.getInstance().getActiveInfoByKey(user.getId());
+        if(userActiveInfo != null){
+            simpMessagingTemplate.convertAndSend("/connect/"+userActiveInfo.getSocketAddress()+"/friend-request","Test content");
+        }
 
         return new ResponseEntity<>(ResponseData.builder()
                 .success(true)
@@ -94,7 +104,16 @@ public class FriendServiceImpl implements FriendService {
         user.addFriend(friendApprove);
         user.removeFriendRequest(friendApprove);
 
+        User userRequestApproved = userRequest.get();
+        FriendApprove friendApproved = new FriendApprove();
+        friendApproved.setUser_id(user.getId());
+        friendApproved.setCreated_date(LocalDateTime.now());
+        userRequestApproved.addFriend(friendApproved);
+
+        userRepository.save(userRequestApproved);
         userRepository.save(user);
+
+        //Socket
         return new ResponseEntity<>(ResponseData.builder()
                 .success(true)
                 .message("accepted friend")
@@ -133,9 +152,19 @@ public class FriendServiceImpl implements FriendService {
         User user = userRepository.findByPhoneNumber(userDetails.getUsername());
 
         List<User> friends = new ArrayList<>();
-
+        //Prepare list friend and time active
         for (FriendApprove item: user.getFriend()) {
             User userFound = userRepository.findById(item.getUser_id()).get();
+            UserActiveInfo userActiveInfo = UserStorage.getInstance().getActiveInfoByKey(userFound.getId());
+
+            if(userActiveInfo != null){
+                userFound.setOnline(userActiveInfo.isActive());
+                userFound.setLastActive(userActiveInfo.getTime());
+            }
+            else {
+                userFound.setOnline(false);
+                userFound.setLastActive(null);
+            }
             friends.add(userFound);
         }
 
@@ -155,6 +184,18 @@ public class FriendServiceImpl implements FriendService {
 
         for (FriendRequest item: user.getFriend_request()) {
             User userFound = userRepository.findById(item.getUser_id()).get();
+
+            UserActiveInfo userActiveInfo = UserStorage.getInstance().getActiveInfoByKey(userFound.getId());
+
+            if(userActiveInfo != null){
+                userFound.setOnline(userActiveInfo.isActive());
+                userFound.setLastActive(userActiveInfo.getTime());
+            }
+            else {
+                userFound.setOnline(false);
+                userFound.setLastActive(null);
+            }
+
             friends.add(userFound);
         }
 

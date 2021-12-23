@@ -38,4 +38,24 @@ public class CloudinaryService {
             return null;
         }
     }
+
+    public Map uploadImageStory(MultipartFile file){
+        try{
+            return cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap("folder","image_story"));
+        }
+        catch(Exception exception)
+        {
+            return null;
+        }
+    }
+
+    public Map deleteImageStory(String public_id){
+        try{
+            return cloudinary.uploader().destroy(public_id, ObjectUtils.asMap("folder","image_story"));
+        }
+        catch(Exception exception)
+        {
+            return null;
+        }
+    }
 }

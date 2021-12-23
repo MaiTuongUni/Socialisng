@@ -35,7 +35,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         final String requestTokenHeader = httpServletRequest.getHeader("Authorization");
         String username = null;
         String jwtToken = null;
-        if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
+        if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ") && !httpServletRequest.getRequestURI().equals("/rest/login")) {
             jwtToken = requestTokenHeader.substring(7);
             Locale locale = LocaleContextHolder.getLocale();
             try {

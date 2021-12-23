@@ -37,6 +37,10 @@ public class User {
 
     private String urlImage;
 
+    private boolean isOnline;
+
+    private LocalDateTime lastActive;
+
     @JsonIgnore
     private String image_public_id;
 

@@ -1,5 +1,6 @@
 package com.spring.socialising.securities;
 
+import com.spring.socialising.components.UserStorage;
 import com.spring.socialising.entities.Account;
 import com.spring.socialising.entities.User;
 import com.spring.socialising.repositories.AccountRepository.AccountRepository;
@@ -42,6 +43,8 @@ public class AccountDetailsService implements UserDetailsService {
         if(accountFound == null || user == null){
             throw new UsernameNotFoundException(String.format(messageSource.getMessage("error.user.not-found", null, locale),username));
         }
+
+        UserStorage.getInstance().updateUserActive(user.getId(),user.getCode_register_socket());
 
         return new JwtUserDetails(
                 user.getFullName(),
